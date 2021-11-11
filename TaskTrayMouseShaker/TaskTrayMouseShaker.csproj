@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net5.0-windows</TargetFramework>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ApplicationIcon>communication.ico</ApplicationIcon>
+		<StartupObject>TaskTrayMouseShaker.App</StartupObject>
+		<AssemblyName>TaskTrayMouseShaker</AssemblyName>
+		<RootNamespace>TaskTrayMouseShaker</RootNamespace>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Update="communication.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Update="Images\communication.ico">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>
