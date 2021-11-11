@@ -96,7 +96,10 @@ namespace TaskTrayMouseShaker
         private async void MenuItem_Start_Click(object sender, EventArgs e)
         {
             //タイマー開始
-            timer.Start();
+            if (!timer.Enabled)
+            {
+                timer.Start();
+            }
         }
 
         /// <summary>
@@ -107,7 +110,10 @@ namespace TaskTrayMouseShaker
         private async void MenuItem_Stop_Click(object sender, EventArgs e)
         {
             //タイマー終了
-            timer.Stop();
+            if (timer.Enabled)
+            {
+                timer.Stop();
+            }
         }
 
         /// <summary>
@@ -122,44 +128,6 @@ namespace TaskTrayMouseShaker
 
         #endregion イベントハンドラー
 
-        /// <summary>
-        /// サーバーからメッセージを受け取ったときの処理
-        /// </summary>
-        /// <param name="message"></param>
-        private void Receive(string message)
-        {
-            switch (message)
-            {
-                case "next":
-                    SendKeys.SendWait("{RIGHT}");
-                    break;
-
-                case "prev":
-                    SendKeys.SendWait("{LEFT}");
-                    break;
-
-                case "blackout":
-                    SendKeys.SendWait("B");
-                    break;
-
-                case "toggleSlideShow":
-                    if (_isSlideshowOn)
-                    {
-                        SendKeys.SendWait("{ESC}");
-                    }
-                    else
-                    {
-                        SendKeys.SendWait("+{F5}");
-                    }
-
-                    //状態を反転する
-                    _isSlideshowOn = !_isSlideshowOn;
-                    break;
-
-                default:
-                    break;
-            }
-        }
 
         /// <summary>
         /// 接続,切断などの状態の通知を表示する

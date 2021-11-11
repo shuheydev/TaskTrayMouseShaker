@@ -12,9 +12,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Update="communication.ico">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
+	  <None Remove="communication.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Update="Images\communication.ico">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
