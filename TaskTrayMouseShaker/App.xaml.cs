@@ -15,11 +15,13 @@ namespace TaskTrayMouseShaker
 
         private NotifyIcon _icon;
 
-        private bool _isSlideshowOn = false;
-
         private Timer timer = new Timer();
 
         private readonly int interval_milliseconds = 300_000;
+
+        private readonly string appRunningIconPath = "./images/mouse_running.ico";
+        private readonly string appStopIconPath = "./images/mouse_stop.ico";
+
 
         /// <summary>
         /// アプリケーション起動時の処理
@@ -34,8 +36,8 @@ namespace TaskTrayMouseShaker
             _icon = new NotifyIcon();
 
             //アイコン設定
-            _icon.Icon = new System.Drawing.Icon("./communication.ico");
-            _icon.Text = _appName;
+            _icon.Icon = new System.Drawing.Icon(appStopIconPath);
+            _icon.Text = $"{_appName} : Stop";
             //表示する
             _icon.Visible = true;
 
@@ -99,6 +101,8 @@ namespace TaskTrayMouseShaker
             if (!timer.Enabled)
             {
                 timer.Start();
+                _icon.Icon = new System.Drawing.Icon(appRunningIconPath);
+                _icon.Text = $"{_appName} : Running";
             }
         }
 
@@ -113,6 +117,8 @@ namespace TaskTrayMouseShaker
             if (timer.Enabled)
             {
                 timer.Stop();
+                _icon.Icon = new System.Drawing.Icon(appStopIconPath);
+                _icon.Text = $"{_appName} : Stop";
             }
         }
 

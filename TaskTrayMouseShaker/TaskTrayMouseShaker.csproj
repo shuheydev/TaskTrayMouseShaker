@@ -5,19 +5,24 @@
 		<TargetFramework>net5.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<ApplicationIcon>communication.ico</ApplicationIcon>
+		<ApplicationIcon>mouse_app.ico</ApplicationIcon>
 		<StartupObject>TaskTrayMouseShaker.App</StartupObject>
-		<AssemblyName>TaskTrayMouseShaker</AssemblyName>
+		<AssemblyName>MouseShaker</AssemblyName>
 		<RootNamespace>TaskTrayMouseShaker</RootNamespace>
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="communication.ico" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="Images\communication.ico">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<None Update="Images\mouse_running.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Images\mouse_stop.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="mouse_app.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Images\mouse.ico">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 
