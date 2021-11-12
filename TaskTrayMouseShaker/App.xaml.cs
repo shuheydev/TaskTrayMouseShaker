@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 
@@ -17,7 +18,7 @@ namespace TaskTrayMouseShaker
 
         private Timer timer = new Timer();
 
-        private readonly int interval_milliseconds = 300_000;
+        private readonly int interval_milliseconds = 5000;
 
         private readonly string appRunningIconPath = "./images/mouse_running.ico";
         private readonly string appStopIconPath = "./images/mouse_stop.ico";
@@ -81,11 +82,20 @@ namespace TaskTrayMouseShaker
             //マウスの座標を取得
             System.Drawing.Point dp = System.Windows.Forms.Cursor.Position;
 
+            ShowBalloonTip("Tick!", "Mouse Move", 1000);
+
             //1px移動させる
             MouseController.SetPosition(dp.X + 1, dp.Y + 1);
 
+            Task.Delay(1000).Wait();
+
             //戻す
             MouseController.SetPosition(dp.X, dp.Y);
+
+
+            SendKeys.SendWait("{NUMLOCK}");
+
+            //ShowBalloonTip("Tick!", "5sec", 1000);
         }
 
         #region イベントハンドラー
