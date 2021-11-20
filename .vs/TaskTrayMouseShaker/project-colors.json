@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "14646e9b-cfb5-42aa-867a-e0304d61cbbf": {
+      "ProjectGuid": "14646e9b-cfb5-42aa-867a-e0304d61cbbf",
+      "DisplayName": "TaskTrayMouseShaker",
+      "ColorIndex": 0
+    }
+  },
+  "NextColorIndex": 1
+}

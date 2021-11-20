@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
+using System.Windows.Forms;//タスクトレイにアイコンを作るために必要
 
 using wpf = System.Windows;
 
@@ -16,7 +16,8 @@ namespace TaskTrayMouseShaker
 
         private NotifyIcon _icon;
 
-        private Timer timer = new Timer();
+
+        private System.Timers.Timer timer = new System.Timers.Timer();
 
         private readonly int interval_milliseconds = 5000;
 
@@ -73,30 +74,15 @@ namespace TaskTrayMouseShaker
             #endregion タスクトレイにアイコンを追加
 
             //タイマー設定
-            timer.Interval = interval_milliseconds;//ms
-            timer.Tick += Timer_Tick;
+            timer.Interval = interval_milliseconds;
+            timer.Elapsed += Timer2_Elapsed;
         }
 
-        private void Timer_Tick(object sender, EventArgs e)
+        private void Timer2_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            //マウスの座標を取得
-            System.Drawing.Point dp = System.Windows.Forms.Cursor.Position;
-
-            ShowBalloonTip("Tick!", "Mouse Move", 1000);
-
-            //1px移動させる
-            MouseController.SetPosition(dp.X + 1, dp.Y + 1);
-
-            Task.Delay(1000).Wait();
-
-            //戻す
-            MouseController.SetPosition(dp.X, dp.Y);
-
-
             SendKeys.SendWait("{NUMLOCK}");
-
-            //ShowBalloonTip("Tick!", "5sec", 1000);
         }
+
 
         #region イベントハンドラー
 
@@ -111,6 +97,7 @@ namespace TaskTrayMouseShaker
             if (!timer.Enabled)
             {
                 timer.Start();
+
                 _icon.Icon = new System.Drawing.Icon(appRunningIconPath);
                 _icon.Text = $"{_appName} : Running";
             }
