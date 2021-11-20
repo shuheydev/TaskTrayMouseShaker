@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;//タスクトレイにアイコンを作るために必要
@@ -18,8 +20,7 @@ namespace TaskTrayMouseShaker
 
 
         private System.Timers.Timer timer = new System.Timers.Timer();
-
-        private readonly int interval_milliseconds = 5000;
+        private readonly int interval_milliseconds = 120_000;//操作チェック間隔。ms
 
         private readonly string appRunningIconPath = "./images/mouse_running.ico";
         private readonly string appStopIconPath = "./images/mouse_stop.ico";
@@ -75,12 +76,74 @@ namespace TaskTrayMouseShaker
 
             //タイマー設定
             timer.Interval = interval_milliseconds;
-            timer.Elapsed += Timer2_Elapsed;
+            timer.Elapsed += Timer_Elapsed;
+
+
+            using (Process currentProcess = Process.GetCurrentProcess())
+            using (ProcessModule currentModule = currentProcess.MainModule)
+            {
+                // メソッドをマウスのイベントに紐づける。
+                _mouseHookId = NativeMethods.SetWindowsHookEx(
+                    (int)NativeMethods.HookType.WH_MOUSE_LL,
+                    _mouseProc,
+                    NativeMethods.GetModuleHandle(currentModule.ModuleName),
+                    0
+                );
+
+                // メソッドをキーボードのイベントに紐づける。
+                _keyboardHookId = NativeMethods.SetWindowsHookEx(
+                    (int)NativeMethods.HookType.WH_KEYBOARD_LL,
+                    _keyboardProc,
+                    NativeMethods.GetModuleHandle(currentModule.ModuleName),
+                    0
+                );
+            }
         }
 
-        private void Timer2_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+
+        // デリゲート
+        private static readonly NativeMethods.LowLevelMouseKeyboardProc _mouseProc = MouseInputCallback;
+        private static readonly NativeMethods.LowLevelMouseKeyboardProc _keyboardProc = KeyboardInputCallback;
+
+        // メソッドを識別するID
+        private static IntPtr _mouseHookId = IntPtr.Zero;
+        private static IntPtr _keyboardHookId = IntPtr.Zero;
+
+
+        //private static bool isUserOperating = false;
+        private static DateTime lastOperationTimeByUser = DateTime.Now;
+
+        // マウス操作のイベントが発生したら実行されるメソッド
+        private static IntPtr MouseInputCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-            SendKeys.SendWait("{NUMLOCK}");
+            //最終操作日時を更新
+            lastOperationTimeByUser = DateTime.Now;
+
+            // マウスのイベントに紐付けられた次のメソッドを実行する。メソッドがなければ処理終了。
+            return NativeMethods.CallNextHookEx(_mouseHookId, nCode, wParam, lParam);
+        }
+
+
+        // キーボード操作のイベントが発生したら実行されるメソッド
+        private static IntPtr KeyboardInputCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            //最終操作日時を更新
+            lastOperationTimeByUser = DateTime.Now;
+
+            // キーボードのイベントに紐付けられた次のメソッドを実行する。メソッドがなければ処理終了。
+            return NativeMethods.CallNextHookEx(_keyboardHookId, nCode, wParam, lParam);
+        }
+
+
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            var elapsedFromLastOperation = DateTime.Now - lastOperationTimeByUser;
+
+            //最終操作日時からinterval_millisecondsの間操作がなかった場合にキー入力を行う
+            if (elapsedFromLastOperation > TimeSpan.FromMilliseconds(interval_milliseconds))
+            {
+                SendKeys.SendWait("{NUMLOCK}");
+            }
         }
 
 
@@ -91,7 +154,7 @@ namespace TaskTrayMouseShaker
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void MenuItem_Start_Click(object sender, EventArgs e)
+        private void MenuItem_Start_Click(object sender, EventArgs e)
         {
             //タイマー開始
             if (!timer.Enabled)
@@ -108,7 +171,7 @@ namespace TaskTrayMouseShaker
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private async void MenuItem_Stop_Click(object sender, EventArgs e)
+        private void MenuItem_Stop_Click(object sender, EventArgs e)
         {
             //タイマー終了
             if (timer.Enabled)
@@ -144,5 +207,15 @@ namespace TaskTrayMouseShaker
             _icon.BalloonTipText = message;
             _icon.ShowBalloonTip(durationByMilliseconds);
         }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            base.OnExit(e);
+
+            NativeMethods.UnhookWindowsHookEx(_mouseHookId);
+            NativeMethods.UnhookWindowsHookEx(_keyboardHookId);
+        }
+
+
     }
 }
