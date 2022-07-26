@@ -2,15 +2,19 @@
 
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<ApplicationIcon>mouse_app.ico</ApplicationIcon>
+		<ApplicationIcon>Images\mouse_app.ico</ApplicationIcon>
 		<StartupObject>TaskTrayMouseShaker.App</StartupObject>
 		<AssemblyName>MouseShaker</AssemblyName>
 		<RootNamespace>TaskTrayMouseShaker</RootNamespace>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="Images\mouse_app.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Update="Images\mouse_running.ico">
@@ -19,7 +23,7 @@
 		<None Update="Images\mouse_stop.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="mouse_app.ico">
+		<None Update="Images\mouse_app.ico">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Images\mouse.ico">

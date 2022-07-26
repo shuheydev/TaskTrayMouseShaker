@@ -19,11 +19,11 @@ namespace TaskTrayMouseShaker
         private NotifyIcon _icon;
 
 
-        private System.Timers.Timer timer = new System.Timers.Timer();
-        private readonly int interval_milliseconds = 120_000;//操作チェック間隔。ms
+        private System.Timers.Timer _timer = new System.Timers.Timer();
+        private readonly int _interval_milliseconds = 120_000;//操作チェック間隔。ms
 
-        private readonly string appRunningIconPath = "./images/mouse_running.ico";
-        private readonly string appStopIconPath = "./images/mouse_stop.ico";
+        private readonly string _appRunningIconPath = "./images/mouse_running.ico";
+        private readonly string _appStopIconPath = "./images/mouse_stop.ico";
 
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace TaskTrayMouseShaker
             _icon = new NotifyIcon();
 
             //アイコン設定
-            _icon.Icon = new System.Drawing.Icon(appStopIconPath);
+            _icon.Icon = new System.Drawing.Icon(_appStopIconPath);
             _icon.Text = $"{_appName} : Stop";
             //表示する
             _icon.Visible = true;
@@ -75,8 +75,8 @@ namespace TaskTrayMouseShaker
             #endregion タスクトレイにアイコンを追加
 
             //タイマー設定
-            timer.Interval = interval_milliseconds;
-            timer.Elapsed += Timer_Elapsed;
+            _timer.Interval = _interval_milliseconds;
+            _timer.Elapsed += Timer_Elapsed;
 
 
             using (Process currentProcess = Process.GetCurrentProcess())
@@ -111,13 +111,13 @@ namespace TaskTrayMouseShaker
 
 
         //private static bool isUserOperating = false;
-        private static DateTime lastOperationTimeByUser = DateTime.Now;
+        private static DateTime _lastOperationTimeByUser = DateTime.Now;
 
         // マウス操作のイベントが発生したら実行されるメソッド
         private static IntPtr MouseInputCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             //最終操作日時を更新
-            lastOperationTimeByUser = DateTime.Now;
+            _lastOperationTimeByUser = DateTime.Now;
 
             // マウスのイベントに紐付けられた次のメソッドを実行する。メソッドがなければ処理終了。
             return NativeMethods.CallNextHookEx(_mouseHookId, nCode, wParam, lParam);
@@ -128,7 +128,7 @@ namespace TaskTrayMouseShaker
         private static IntPtr KeyboardInputCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             //最終操作日時を更新
-            lastOperationTimeByUser = DateTime.Now;
+            _lastOperationTimeByUser = DateTime.Now;
 
             // キーボードのイベントに紐付けられた次のメソッドを実行する。メソッドがなければ処理終了。
             return NativeMethods.CallNextHookEx(_keyboardHookId, nCode, wParam, lParam);
@@ -137,10 +137,10 @@ namespace TaskTrayMouseShaker
 
         private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            var elapsedFromLastOperation = DateTime.Now - lastOperationTimeByUser;
+            var elapsedFromLastOperation = DateTime.Now - _lastOperationTimeByUser;
 
             //最終操作日時からinterval_millisecondsの間操作がなかった場合にキー入力を行う
-            if (elapsedFromLastOperation > TimeSpan.FromMilliseconds(interval_milliseconds))
+            if (elapsedFromLastOperation > TimeSpan.FromMilliseconds(_interval_milliseconds))
             {
                 SendKeys.SendWait("{NUMLOCK}");
             }
@@ -157,11 +157,11 @@ namespace TaskTrayMouseShaker
         private void MenuItem_Start_Click(object sender, EventArgs e)
         {
             //タイマー開始
-            if (!timer.Enabled)
+            if (!_timer.Enabled)
             {
-                timer.Start();
+                _timer.Start();
 
-                _icon.Icon = new System.Drawing.Icon(appRunningIconPath);
+                _icon.Icon = new System.Drawing.Icon(_appRunningIconPath);
                 _icon.Text = $"{_appName} : Running";
             }
         }
@@ -174,10 +174,10 @@ namespace TaskTrayMouseShaker
         private void MenuItem_Stop_Click(object sender, EventArgs e)
         {
             //タイマー終了
-            if (timer.Enabled)
+            if (_timer.Enabled)
             {
-                timer.Stop();
-                _icon.Icon = new System.Drawing.Icon(appStopIconPath);
+                _timer.Stop();
+                _icon.Icon = new System.Drawing.Icon(_appStopIconPath);
                 _icon.Text = $"{_appName} : Stop";
             }
         }

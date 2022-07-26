@@ -5,6 +5,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
+//参考:https://slash-mochi.net/blog/2020/06/06/post-3368/
 namespace TaskTrayMouseShaker
 {
     [StructLayout(LayoutKind.Sequential)]
